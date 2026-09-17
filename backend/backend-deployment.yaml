@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: kubernetes-anator-app-backend:latest
+          image: denning01/kubernetes-anator-backend:latest
           imagePullPolicy: IfNotPresent
 
           ports:
