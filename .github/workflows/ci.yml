@@ -13,5 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build backend Docker image
-        run: docker build -t kubernetes-anator-backend ./backend
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t denning01/kubernetes-anator-backend:latest ./backend
+
+      - name: Push Docker image
+        run: docker push denning01/kubernetes-anator-backend:latest
