@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: stateful-postgres
+
+spec:
+  serviceName: stateful-postgres-service
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: stateful-postgres
+
+  template:
+    metadata:
+      labels:
+        app: stateful-postgres
+
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+
+          env:
+            - name: POSTGRES_DB
+              value: appdb
+
+            - name: POSTGRES_USER
+              value: appuser
+
+            - name: POSTGRES_PASSWORD
+              value: password
+
+          ports:
+            - containerPort: 5432
+
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 1Gi

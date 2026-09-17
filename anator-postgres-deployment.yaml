@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: anator-postgres
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: anator-postgres
+
+  template:
+    metadata:
+      labels:
+        app: anator-postgres
+
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+
+          envFrom:
+            - secretRef:
+                name: anator-postgres-secret
+
+          ports:
+            - containerPort: 5432
+
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+
+            - name: postgres-init
+              mountPath: /docker-entrypoint-initdb.d/init.sql
+              subPath: init.sql
+              readOnly: true
+
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: anator-postgres-pvc
+
+        - name: postgres-init
+          configMap:
+            name: anator-postgres-init
