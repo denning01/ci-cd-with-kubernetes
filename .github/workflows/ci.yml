@@ -19,8 +19,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: docker build -t denning01/kubernetes-anator-backend:latest ./backend
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
 
-      - name: Push Docker image
-        run: docker push denning01/kubernetes-anator-backend:latest
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t denning01/kubernetes-anator-backend:$IMAGE_TAG \
+            -t denning01/kubernetes-anator-backend:latest \
+            ./backend
+
+      - name: Push Docker images
+        run: |
+          docker push denning01/kubernetes-anator-backend:$IMAGE_TAG
+          docker push denning01/kubernetes-anator-backend:latest
