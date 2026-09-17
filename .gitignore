@@ -1,0 +1,8 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Kubernetes secrets
+*-secret.yaml
+*-secret.yml
